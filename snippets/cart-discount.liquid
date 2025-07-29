@@ -1,0 +1,18 @@
+<input type="text" id="cart-discount-code">
+<button id="apply-discount">Apply Discount</button>
+<script>
+  document.addEventListener('DOMContentLoaded',function(){
+    document.querySelector('#apply-discount').addEventListener('click',()=>{
+      console.log(111)
+      const discountCode = document.querySelector('#cart-discount-code').value.trim();
+      if (discountCode==='') return;
+      const formData = new FormData();
+      formData.append('discount',discountCode);
+      fetch('/cart/update.js',{
+        method: "POST",
+        body: formData
+      })
+      .then(response=>response.json())
+    })
+  })
+</script>
