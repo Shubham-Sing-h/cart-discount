@@ -1,18 +1,27 @@
-<input type="text" id="cart-discount-code">
-<button id="apply-discount">Apply Discount shubham branch</button>
+<input type="text" id="couponInput">
+<button id="couponApply">Apply</button>
 <script>
   document.addEventListener('DOMContentLoaded',function(){
-    document.querySelector('#apply-discount').addEventListener('click',()=>{
-      console.log(111)
-      const discountCode = document.querySelector('#cart-discount-code').value.trim();
-      if (discountCode==='') return;
+    document.querySelector('#couponApply').addEventListener('click',()=>{
+      const couponInput = document.querySelector('#couponInput').value.trim();
       const formData = new FormData();
-      formData.append('discount',discountCode);
+      formData.append('discount',couponInput);
       fetch('/cart/update.js',{
         method: "POST",
         body: formData
       })
       .then(response=>response.json())
+      .then((data)=>{
+        fetch('?section_id=cart-drawer')
+          .then(r=>r.text())
+          .then((html)=>{
+            const newHtml = new DOMParser().parseFromString(html, 'text/html');
+            const updatedCart = newHtml.querySelector('#CartDrawer');
+            document.querySelector('#CartDrawer').innerHTML = updatedCart.innerHTML;
+          })
+          .catch(e=>console.log(e))
+      })
+      .catch((err)=>{console.log(err);})
     })
   })
 </script>
