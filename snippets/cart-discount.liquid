@@ -1,27 +1,32 @@
 <input type="text" id="couponInput">
-<button id="couponApply">Apply</button>
+<button id="applyCoupon">Apply</button>
+
 <script>
   document.addEventListener('DOMContentLoaded',function(){
-    document.querySelector('#couponApply').addEventListener('click',()=>{
-      const couponInput = document.querySelector('#couponInput').value.trim();
+    document.querySelector('#applyCoupon').addEventListener('click',function(){
+      const discountCode = document.querySelector('#couponInput').value.trim();
       const formData = new FormData();
-      formData.append('discount',couponInput);
-      fetch('/cart/update.js',{
-        method: "POST",
-        body: formData
-      })
+      formData.append('discount',discountCode);
+      fetch('/cart/update.js',
+        {
+          method: "POST",
+          body: formData
+        }
+      )
       .then(response=>response.json())
-      .then((data)=>{
-        fetch('?section_id=cart-drawer')
-          .then(r=>r.text())
-          .then((html)=>{
-            const newHtml = new DOMParser().parseFromString(html, 'text/html');
-            const updatedCart = newHtml.querySelector('#CartDrawer');
-            document.querySelector('#CartDrawer').innerHTML = updatedCart.innerHTML;
-          })
-          .catch(e=>console.log(e))
+      .then(async (rest)=>{
+        const response = await fetch('/cart?section_id=cart-drawer');
+        try{
+        const html = await response.text();
+        const newHtml = new DOMParser().parseFromString(html,'text/html');
+        const updatedCart = newHtml.querySelector('#CartDrawer');
+        document.querySelector('#CartDrawer').innerHTML = updatedCart.innerHTML;
+        }
+        catch(error){
+          console.log("error aa rhi hai=> ",error);
+        }
       })
-      .catch((err)=>{console.log(err);})
+      .catch(error=>console.log(error))
     })
   })
 </script>
